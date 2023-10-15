@@ -30,7 +30,8 @@ CREATE TABLE public.tickets (
     username character varying(80) NOT NULL,
     flight_number character varying(20) NOT NULL,
     price integer NOT NULL,
-    status character varying(20) NOT NULL
+    status character varying(20) NOT NULL 
+        CHECK (status IN ('PAID', 'CANCELED'))
 );
 
 
