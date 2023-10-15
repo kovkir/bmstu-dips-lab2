@@ -9,7 +9,7 @@ class NotFoundException(HTTPException):
     ) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"{prefix}: объекта с таким id не существует", 
+            detail=f"{prefix}: объекта с таким uid не существует", 
             headers=headers
         )
 
