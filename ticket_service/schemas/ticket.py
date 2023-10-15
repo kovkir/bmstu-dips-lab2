@@ -11,6 +11,14 @@ class TicketBase(BaseModel):
     status: TicketStatus
 
 
+class TicketFilter(BaseModel):
+    username: constr(max_length=80) | None = None
+    flight_number: constr(max_length=20) | None = None
+    min_price: conint(ge=1) | None = None
+    max_price: conint(ge=1) | None = None
+    status: TicketStatus | None = None
+
+
 class TicketUpdate(BaseModel):
     status: TicketStatus
 

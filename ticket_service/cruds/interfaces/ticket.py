@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 from models.ticket import TicketModel
-from schemas.ticket import TicketUpdate
+from schemas.ticket import TicketFilter, TicketUpdate
+from enums.sort import SortTicket
 
 
 class ITicketCRUD(ABC):
@@ -12,8 +13,10 @@ class ITicketCRUD(ABC):
 
     @abstractmethod
     async def get_all(
-            self, 
-            offset: int = 0, 
+            self,
+            ticket_filter: TicketFilter,
+            sort_field: SortTicket,
+            offset: int = 0,
             limit: int = 100
         ) -> list[TicketModel]:
        pass

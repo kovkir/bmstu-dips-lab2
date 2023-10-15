@@ -4,9 +4,11 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from uuid import UUID
 
-from schemas.ticket import TicketCreate, TicketUpdate, Ticket
+from schemas.ticket import TicketFilter, TicketCreate, TicketUpdate, Ticket
 from services.ticket import TicketService
 from enums.responses import RespEnum
+from enums.sort import SortTicket
+from enums.status import TicketStatus
 from utils.database import get_db
 from cruds.interfaces.ticket import ITicketCRUD
 from cruds.ticket import TicketCRUD
@@ -37,13 +39,30 @@ router = APIRouter(
 async def get_all_tickets(
         db: Annotated[Session, Depends(get_db)], 
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
+        username:      Annotated[str | None, Query(max_length=80)] = None,
+        flight_number: Annotated[str | None, Query(max_length=20)] = None,
+        min_price: Annotated[int | None, Query(ge=1)] = None,
+        max_price: Annotated[int | None, Query(ge=1)] = None,
+        status: TicketStatus | None = None,
+        sort_field: SortTicket = SortTicket.IdAsc,
         page: Annotated[int, Query(ge=0)] = 0,
         size: Annotated[int, Query(ge=1)] = 100
     ):
     return await TicketService(
             ticketCRUD=ticketCRUD,
             db=db
-        ).get_all(page, size)
+        ).get_all(
+            ticket_filter=TicketFilter(
+                username=username,
+                flight_number=flight_number,
+                min_price=min_price,
+                max_price=max_price,
+                status=status
+            ),
+            sort_field=sort_field,
+            page=page, 
+            size=size
+        )
 
 
 @router.get(

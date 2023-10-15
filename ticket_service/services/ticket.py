@@ -2,17 +2,26 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 
 from models.ticket import TicketModel
-from schemas.ticket import TicketCreate, TicketUpdate
+from schemas.ticket import TicketFilter, TicketCreate, TicketUpdate
 from exceptions.http_exceptions import NotFoundException, ConflictException
 from cruds.interfaces.ticket import ITicketCRUD
+from enums.sort import SortTicket
 
 
 class TicketService():
     def __init__(self, ticketCRUD: type[ITicketCRUD], db: Session):
         self._ticketCRUD = ticketCRUD(db)
         
-    async def get_all(self, page: int = 0, size: int = 100):
+    async def get_all(
+            self, 
+            ticket_filter: TicketFilter,
+            sort_field: SortTicket,
+            page: int = 0, 
+            size: int = 100
+        ):
         return await self._ticketCRUD.get_all(
+                ticket_filter=ticket_filter,
+                sort_field=sort_field,
                 offset=page * size, 
                 limit=size
             )
