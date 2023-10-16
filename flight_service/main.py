@@ -62,8 +62,8 @@ if __name__ == '__main__':
     settings = get_settings()
     uvicorn.run(
         "main:app", 
-        host=settings["app"]["host"],
-        port=settings["app"]["port"],
-        log_level=settings["app"]["log_level"],
-        reload=settings["app"]["reload"]
+        host=settings["services"]["flight"]["host"],
+        port=settings["services"]["flight"]["port"],
+        log_level=settings["services"]["flight"]["log_level"],
+        reload=settings["services"]["flight"]["reload"]
     )

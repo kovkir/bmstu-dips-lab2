@@ -1,7 +1,12 @@
 __pycache__/
-venv/
-db_data/
-.vscode/
 .pytest_cache/
-docs/key.pem
+.vscode/
 .DS_Store
+
+venv/
+
+db_data_flight/
+db_data_ticket/
+
+docs/key.pem
+
