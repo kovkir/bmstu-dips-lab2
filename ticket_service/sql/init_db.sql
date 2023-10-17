@@ -21,10 +21,10 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: tickets; Type: TABLE; Schema: public; Owner: postgres
+-- Name: ticket; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.tickets (
+CREATE TABLE public.ticket (
     id integer NOT NULL,
     ticket_uid uuid NOT NULL,
     username character varying(80) NOT NULL,
@@ -35,13 +35,13 @@ CREATE TABLE public.tickets (
 );
 
 
-ALTER TABLE public.tickets OWNER TO postgres;
+ALTER TABLE public.ticket OWNER TO postgres;
 
 --
--- Name: tickets_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: ticket_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.tickets_id_seq
+CREATE SEQUENCE public.ticket_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -50,58 +50,58 @@ CREATE SEQUENCE public.tickets_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.tickets_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.ticket_id_seq OWNER TO postgres;
 
 --
--- Name: tickets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: ticket_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.tickets_id_seq OWNED BY public.tickets.id;
-
-
---
--- Name: tickets id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.tickets ALTER COLUMN id SET DEFAULT nextval('public.tickets_id_seq'::regclass);
+ALTER SEQUENCE public.ticket_id_seq OWNED BY public.ticket.id;
 
 
 --
--- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: ticket id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-COPY public.tickets (id, ticket_uid, username, flight_number, price, status) FROM stdin;
+ALTER TABLE ONLY public.ticket ALTER COLUMN id SET DEFAULT nextval('public.ticket_id_seq'::regclass);
+
+
+--
+-- Data for Name: ticket; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ticket (id, ticket_uid, username, flight_number, price, status) FROM stdin;
 \.
 
 
 --
--- Name: tickets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: ticket_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tickets_id_seq', 1, false);
-
-
---
--- Name: tickets tickets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT tickets_pkey PRIMARY KEY (id);
+SELECT pg_catalog.setval('public.ticket_id_seq', 1, false);
 
 
 --
--- Name: tickets tickets_ticket_uid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ticket ticket_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT tickets_ticket_uid_key UNIQUE (ticket_uid);
+ALTER TABLE ONLY public.ticket
+    ADD CONSTRAINT ticket_pkey PRIMARY KEY (id);
 
 
 --
--- Name: ix_tickets_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: ticket ticket_ticket_uid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-CREATE INDEX ix_tickets_id ON public.tickets USING btree (id);
+ALTER TABLE ONLY public.ticket
+    ADD CONSTRAINT ticket_ticket_uid_key UNIQUE (ticket_uid);
+
+
+--
+-- Name: ix_ticket_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ix_ticket_id ON public.ticket USING btree (id);
 
 
 --

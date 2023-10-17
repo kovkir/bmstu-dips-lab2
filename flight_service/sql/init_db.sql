@@ -21,10 +21,10 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: airports; Type: TABLE; Schema: public; Owner: postgres
+-- Name: airport; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.airports (
+CREATE TABLE public.airport (
     id integer NOT NULL,
     name character varying(255),
     city character varying(255),
@@ -32,13 +32,13 @@ CREATE TABLE public.airports (
 );
 
 
-ALTER TABLE public.airports OWNER TO postgres;
+ALTER TABLE public.airport OWNER TO postgres;
 
 --
--- Name: airports_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: airport_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.airports_id_seq
+CREATE SEQUENCE public.airport_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -47,20 +47,20 @@ CREATE SEQUENCE public.airports_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.airports_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.airport_id_seq OWNER TO postgres;
 
 --
--- Name: airports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: airport_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.airports_id_seq OWNED BY public.airports.id;
+ALTER SEQUENCE public.airport_id_seq OWNED BY public.airport.id;
 
 
 --
--- Name: flights; Type: TABLE; Schema: public; Owner: postgres
+-- Name: flight; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.flights (
+CREATE TABLE public.flight (
     id integer NOT NULL,
     flight_number character varying(20) NOT NULL,
     price integer NOT NULL,
@@ -70,13 +70,13 @@ CREATE TABLE public.flights (
 );
 
 
-ALTER TABLE public.flights OWNER TO postgres;
+ALTER TABLE public.flight OWNER TO postgres;
 
 --
--- Name: flights_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: flight_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.flights_id_seq
+CREATE SEQUENCE public.flight_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -85,114 +85,114 @@ CREATE SEQUENCE public.flights_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.flights_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.flight_id_seq OWNER TO postgres;
 
 --
--- Name: flights_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: flight_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.flights_id_seq OWNED BY public.flights.id;
-
-
---
--- Name: airports id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.airports ALTER COLUMN id SET DEFAULT nextval('public.airports_id_seq'::regclass);
+ALTER SEQUENCE public.flight_id_seq OWNED BY public.flight.id;
 
 
 --
--- Name: flights id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: airport id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.flights ALTER COLUMN id SET DEFAULT nextval('public.flights_id_seq'::regclass);
+ALTER TABLE ONLY public.airport ALTER COLUMN id SET DEFAULT nextval('public.airport_id_seq'::regclass);
 
 
 --
--- Data for Name: airports; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: flight id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-COPY public.airports (id, name, city, country) FROM stdin;
+ALTER TABLE ONLY public.flight ALTER COLUMN id SET DEFAULT nextval('public.flight_id_seq'::regclass);
+
+
+--
+-- Data for Name: airport; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.airport (id, name, city, country) FROM stdin;
 1	Шереметьево	Москва	Россия
 2	Пулково	Санкт-Петербург	Россия
 \.
 
 
 --
--- Data for Name: flights; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: flight; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.flights (id, flight_number, price, datetime, from_airport_id, to_airport_id) FROM stdin;
+COPY public.flight (id, flight_number, price, datetime, from_airport_id, to_airport_id) FROM stdin;
 1	AFL031	1500	2021-10-08 20:00:00+00	2	1
 \.
 
 
 --
--- Name: airports_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: airport_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.airports_id_seq', 2, true);
-
-
---
--- Name: flights_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.flights_id_seq', 1, true);
+SELECT pg_catalog.setval('public.airport_id_seq', 2, true);
 
 
 --
--- Name: airports airports_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: flight_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.airports
-    ADD CONSTRAINT airports_pkey PRIMARY KEY (id);
-
-
---
--- Name: flights flights_flight_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.flights
-    ADD CONSTRAINT flights_flight_number_key UNIQUE (flight_number);
+SELECT pg_catalog.setval('public.flight_id_seq', 1, true);
 
 
 --
--- Name: flights flights_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: airport airport_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.flights
-    ADD CONSTRAINT flights_pkey PRIMARY KEY (id);
-
-
---
--- Name: ix_airports_id; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX ix_airports_id ON public.airports USING btree (id);
+ALTER TABLE ONLY public.airport
+    ADD CONSTRAINT airport_pkey PRIMARY KEY (id);
 
 
 --
--- Name: ix_flights_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: flight flight_flight_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-CREATE INDEX ix_flights_id ON public.flights USING btree (id);
-
-
---
--- Name: flights flights_from_airport_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.flights
-    ADD CONSTRAINT flights_from_airport_id_fkey FOREIGN KEY (from_airport_id) REFERENCES public.airports(id);
+ALTER TABLE ONLY public.flight
+    ADD CONSTRAINT flight_flight_number_key UNIQUE (flight_number);
 
 
 --
--- Name: flights flights_to_airport_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: flight flight_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.flights
-    ADD CONSTRAINT flights_to_airport_id_fkey FOREIGN KEY (to_airport_id) REFERENCES public.airports(id);
+ALTER TABLE ONLY public.flight
+    ADD CONSTRAINT flight_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ix_airport_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ix_airport_id ON public.airport USING btree (id);
+
+
+--
+-- Name: ix_flight_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ix_flight_id ON public.flight USING btree (id);
+
+
+--
+-- Name: flight flight_from_airport_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.flight
+    ADD CONSTRAINT flight_from_airport_id_fkey FOREIGN KEY (from_airport_id) REFERENCES public.airport(id);
+
+
+--
+-- Name: flight flight_to_airport_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.flight
+    ADD CONSTRAINT flight_to_airport_id_fkey FOREIGN KEY (to_airport_id) REFERENCES public.airport(id);
 
 
 --

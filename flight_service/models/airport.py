@@ -3,7 +3,7 @@ from utils.database import Base
 
 
 class AirportModel(Base):
-    __tablename__ = "airports"
+    __tablename__ = "airport"
     __table_args__ = {'extend_existing': True}
     
     id      = Column(Integer, primary_key=True, index=True)
