@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=flight_db
     volumes:
-      - ./db_data_flight:/var/lib/postgresql/data
+      - ./pg_data_flight:/var/lib/postgresql/data
       - ./flight_service/sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
       - default
@@ -31,7 +31,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=ticket_db
     volumes:
-      - ./db_data_ticket:/var/lib/postgresql/data
+      - ./pg_data_ticket:/var/lib/postgresql/data
       - ./ticket_service/sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
       - default
@@ -70,9 +70,9 @@ services:
         condition: service_healthy
 
 volumes:
-  db_data_flight:
+  pg_data_flight:
     driver: local
-  db_data_ticket:
+  pg_data_ticket:
     driver: local
 
 networks:

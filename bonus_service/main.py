@@ -43,8 +43,6 @@ create_tables()
 app = FastAPI(
     title="OpenAPI definition",
     version="v1",
-    # servers=[{"url": "http://94.139.245.224:8080"},
-    #          {"url": "http://localhost:8080"}]
 )
 app.include_router(api_router, prefix="/api/v1")
 app.openapi = custom_openapi
@@ -64,8 +62,8 @@ if __name__ == '__main__':
     settings = get_settings()
     uvicorn.run(
         "main:app", 
-        host=settings["app"]["host"],
-        port=settings["app"]["port"],
-        log_level=settings["app"]["log_level"],
-        reload=settings["app"]["reload"]
+        host=settings["services"]["bonus"]["host"],
+        port=settings["services"]["bonus"]["port"],
+        log_level=settings["services"]["bonus"]["log_level"],
+        reload=settings["services"]["bonus"]["reload"]
     )

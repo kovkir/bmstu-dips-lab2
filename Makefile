@@ -8,13 +8,13 @@ info:
 delete-all:
 	docker rmi flight_service; \
 	docker rmi ticket_service; \
-	rm -rf db_data_flight; \
-	rm -rf db_data_ticket;
+	rm -rf pg_data_flight; \
+	rm -rf pg_data_ticket;
 
 restart:
-	docker-compose down && \
-	docker rmi flight_service && \
-	docker rmi ticket_service && \
+	docker-compose down; \
+	docker rmi flight_service; \
+	docker rmi ticket_service; \
 	docker-compose up -d
 
 # run-tests:
