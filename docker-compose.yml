@@ -3,6 +3,7 @@ version: '3.1'
 services:
   flight_database:
     image: postgres:16-alpine
+    container_name: flight_database
     ports:
       - "5432:5432"
     environment:
@@ -22,6 +23,7 @@ services:
 
   ticket_database:
     image: postgres:16-alpine
+    container_name: ticket_database
     ports:
       - "5433:5432"
     environment:
@@ -41,6 +43,7 @@ services:
   
   flight_service:
     image: flight_service
+    container_name: flight_service
     build:
       context: "."
       dockerfile: ./flight_service/Dockerfile
@@ -54,6 +57,7 @@ services:
 
   ticket_service:
     image: ticket_service
+    container_name: ticket_service
     build:
       context: "."
       dockerfile: ./ticket_service/Dockerfile
