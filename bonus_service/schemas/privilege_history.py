@@ -8,9 +8,12 @@ from enums.status import PrivilegeHistoryStatus
 class PrivilegeHistoryBase(BaseModel):
     privilege_id: int | None
     ticket_uid: UUID
-    datetime: dt
     balance_diff: int
     operation_type: PrivilegeHistoryStatus
+
+
+class PrivilegeHistoryFilter(BaseModel):
+    privilege_id: int | None
 
 
 class PrivilegeHistoryCreate(PrivilegeHistoryBase):
@@ -19,3 +22,4 @@ class PrivilegeHistoryCreate(PrivilegeHistoryBase):
 
 class PrivilegeHistory(PrivilegeHistoryBase):
     id: int
+    datetime: dt
