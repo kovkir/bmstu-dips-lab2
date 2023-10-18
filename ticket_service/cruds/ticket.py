@@ -20,10 +20,6 @@ class TicketCRUD(ITicketCRUD):
     
         return tickets.offset(offset).limit(limit).all()
     
-    async def get_by_id(self, ticket_id: int):
-        return self._db.query(TicketModel).filter(
-            TicketModel.ticket_id == ticket_id).first()
-    
     async def get_by_uid(self, ticket_uid: UUID):
         return self._db.query(TicketModel).filter(
             TicketModel.ticket_uid == ticket_uid).first()

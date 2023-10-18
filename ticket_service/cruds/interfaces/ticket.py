@@ -22,10 +22,6 @@ class ITicketCRUD(ABC):
        pass
     
     @abstractmethod
-    async def get_by_id(self, ticket_id: int) -> TicketModel | None:
-        pass
-
-    @abstractmethod
     async def get_by_uid(self, ticket_uid: UUID) -> TicketModel | None:
         pass
 

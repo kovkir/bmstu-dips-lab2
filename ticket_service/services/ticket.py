@@ -26,20 +26,10 @@ class TicketService():
                 limit=size
             )
 
-    async def get_by_id(self, ticket_id: int):
-        ticket = await self._ticketCRUD.get_by_id(ticket_id)
-        if ticket == None:
-            raise NotFoundException(prefix="Get Ticket")
-        
-        return ticket
-    
     async def get_by_uid(self, ticket_uid: UUID):
         ticket = await self._ticketCRUD.get_by_uid(ticket_uid)
         if ticket == None:
-            raise NotFoundException(
-                prefix="Get Ticket",
-                search_field="uid"
-            )
+            raise NotFoundException(prefix="Get Ticket")
         
         return ticket
     
@@ -51,15 +41,15 @@ class TicketService():
         
         return ticket
     
-    async def delete(self, ticket_id: int):
-        ticket = await self._ticketCRUD.get_by_id(ticket_id)
+    async def delete(self, ticket_uid: UUID):
+        ticket = await self._ticketCRUD.get_by_uid(ticket_uid)
         if ticket == None:
             raise NotFoundException(prefix="Delete Ticket")
         
         return await self._ticketCRUD.delete(ticket)
     
-    async def patch(self, ticket_id: int, ticket_update: TicketUpdate):
-        ticket = await self._ticketCRUD.get_by_id(ticket_id)
+    async def patch(self, ticket_uid: UUID, ticket_update: TicketUpdate):
+        ticket = await self._ticketCRUD.get_by_uid(ticket_uid)
         if ticket == None:
             raise NotFoundException(prefix="Update Ticket")
     

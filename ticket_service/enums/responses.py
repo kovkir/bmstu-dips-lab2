@@ -8,10 +8,6 @@ class RespEnum(Enum):
         "model": list[Ticket],
         "description": "All Tickets",
     }
-    GetByID = {
-        "model": Ticket,
-        "description": "Ticket by ID",
-    }
     GetByUID = {
         "model": Ticket,
         "description": "Ticket by UID",
@@ -34,7 +30,7 @@ class RespEnum(Enum):
         },
     }
     Delete = {
-        "description": "Ticket by ID was removed",
+        "description": "Ticket by UID was removed",
         "content": {
             "application/octet-stream": {
                 "example": ""
@@ -43,7 +39,7 @@ class RespEnum(Enum):
     }
     Patch = {
         "model": Ticket,
-        "description": "Ticket by ID was updated",
+        "description": "Ticket by UID was updated",
     }
 
 
@@ -53,7 +49,7 @@ class RespEnum(Enum):
     }
     NotFound = {
         "model": ErrorResponse,
-        "description": "Not found Ticket",
+        "description": "Not found Ticket by UID",
     }
     Conflict = {
         "model": ErrorResponse,

@@ -66,26 +66,6 @@ async def get_all_tickets(
 
 
 @router.get(
-    "/{ticket_id}/", 
-    status_code=status.HTTP_200_OK,
-    response_model=Ticket,
-    responses={
-        status.HTTP_200_OK: RespEnum.GetByID.value,
-        status.HTTP_404_NOT_FOUND: RespEnum.NotFound.value,
-    }
-)
-async def get_ticket_by_id(
-        db: Annotated[Session, Depends(get_db)], 
-        ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
-        ticket_id: int
-    ):
-    return await TicketService(
-            ticketCRUD=ticketCRUD,
-            db=db,
-        ).get_by_id(ticket_id)
-
-
-@router.get(
     "/{ticket_uid}/", 
     status_code=status.HTTP_200_OK,
     response_model=Ticket,
@@ -130,7 +110,7 @@ async def create_new_ticket(
 
 
 @router.delete(
-    "/{ticket_id}/",
+    "/{ticket_uid}/",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
     responses={
@@ -138,15 +118,15 @@ async def create_new_ticket(
         status.HTTP_404_NOT_FOUND: RespEnum.NotFound.value,
     }
 )
-async def remove_ticket_by_id(
+async def remove_ticket_by_uid(
         db: Annotated[Session, Depends(get_db)],
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)], 
-        ticket_id: int
+        ticket_uid: UUID
     ):
     ticket = await TicketService(
             ticketCRUD=ticketCRUD,
             db=db,
-        ).delete(ticket_id)
+        ).delete(ticket_uid)
     
     return Response(
             status_code=status.HTTP_204_NO_CONTENT
@@ -154,7 +134,7 @@ async def remove_ticket_by_id(
 
 
 @router.patch(
-    "/{ticket_id}/",
+    "/{ticket_uid}/",
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: RespEnum.Patch.value,
@@ -164,10 +144,10 @@ async def remove_ticket_by_id(
 async def update_ticket_by_id(
         db: Annotated[Session, Depends(get_db)], 
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
-        ticket_id: int,
+        ticket_uid: UUID,
         ticket_update: TicketUpdate
     ):
     return await TicketService(
             ticketCRUD=ticketCRUD,
             db=db,
-        ).patch(ticket_id, ticket_update)
+        ).patch(ticket_uid, ticket_update)
