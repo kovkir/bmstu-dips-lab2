@@ -5,11 +5,12 @@ class NotFoundException(HTTPException):
     def __init__(
         self,
         prefix: str,
+        search_field: str,
         headers: dict[str, str] | None = None
     ) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"{prefix}: объекта с таким id не существует", 
+            detail=f"{prefix}: объекта с таким {search_field} не существует", 
             headers=headers
         )
 

@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from models.privilege_history import PrivilegeHistoryModel
 from schemas.privilege_history import PrivilegeHistoryFilter
 
+
 class IPrivilegeHistoryCRUD(ABC):
     def __init__(self, db: Session):
         self._db = db
