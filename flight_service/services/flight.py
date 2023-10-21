@@ -33,7 +33,11 @@ class FlightService():
         flight = FlightModel(**flight_create.model_dump())
         flight = await self._flightCRUD.add(flight)
         if flight == None:
-            raise ConflictException(prefix="Add flight")
+            raise ConflictException(
+                    prefix="Add flight",
+                    message="либо flight_number уже занят, "\
+                            "либо такого(их) аэропорта(ов) не существует"
+                )
         
         return flight
     
