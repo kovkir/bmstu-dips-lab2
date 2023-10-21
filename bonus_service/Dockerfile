@@ -10,4 +10,4 @@ RUN pip3.10 install -r requirements.txt
 
 EXPOSE 8050
 
-CMD ["python3", "bonus_service/main.py"]
+CMD ["python3", "bonus_service/app/main.py"]

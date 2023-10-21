@@ -10,4 +10,4 @@ RUN pip3.10 install -r requirements.txt
 
 EXPOSE 8070
 
-CMD ["python3", "ticket_service/main.py"]
+CMD ["python3", "ticket_service/app/main.py"]

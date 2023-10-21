@@ -10,4 +10,4 @@ RUN pip3.10 install -r requirements.txt
 
 EXPOSE 8060
 
-CMD ["python3", "flight_service/main.py"]
+CMD ["python3", "flight_service/app/main.py"]
