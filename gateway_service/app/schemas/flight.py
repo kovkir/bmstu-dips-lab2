@@ -6,8 +6,8 @@ class Flight(BaseModel):
     flightNumber: constr(max_length=20)
     price: conint(ge=1)
     datetime: dt
-    fromAirport: str | None = None
-    toAirport: str | None = None
+    fromAirport: str | None
+    toAirport: str | None
 
 
 class FlightsList(BaseModel):
