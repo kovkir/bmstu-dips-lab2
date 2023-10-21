@@ -30,7 +30,7 @@ router = APIRouter(
         status.HTTP_200_OK: RespEnum.GetAllFlights.value,
     }
 )
-async def get_all_airports(
+async def get_list_of_flights(
         flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
         page: Annotated[int, Query(ge=0)] = 0,
         size: Annotated[int, Query(ge=1)] = 100
