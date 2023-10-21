@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, conint
 
 from enums.status import PrivilegeStatus
 
@@ -6,7 +6,7 @@ from enums.status import PrivilegeStatus
 class PrivilegeBase(BaseModel):
     username: constr(max_length=80)
     status: PrivilegeStatus = 'BRONZE'
-    balance: int | None = None
+    balance: conint(ge=0) | None = None
 
 
 class PrivilegeFilter(BaseModel):
@@ -16,7 +16,7 @@ class PrivilegeFilter(BaseModel):
 
 class PrivilegeUpdate(BaseModel):
     status: PrivilegeStatus | None = None
-    balance: int | None = None
+    balance: conint(ge=0) | None = None
 
 
 class PrivilegeCreate(PrivilegeBase):

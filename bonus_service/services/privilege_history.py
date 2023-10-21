@@ -23,10 +23,7 @@ class PrivilegeHistoryService():
     async def get_by_id(self, privilege_history_id: int):
         privilege_history = await self._privilegeHistoryCRUD.get_by_id(privilege_history_id)
         if privilege_history == None:
-            raise NotFoundException(
-                prefix="Get Privilege History", 
-                search_field="id"
-            )
+            raise NotFoundException(prefix="Get Privilege History")
         
         return privilege_history
     
@@ -34,14 +31,14 @@ class PrivilegeHistoryService():
         privilege_history = PrivilegeHistoryModel(**privilege_history_create.model_dump())
         privilege_history = await self._privilegeHistoryCRUD.add(privilege_history)
         if privilege_history == None:
-            raise ConflictException(prefix="Add Privilege History")
+            raise ConflictException(
+                    prefix="Add Privilege History",
+                    message="не существует привилегии с таким id"
+                )
         
         return privilege_history
     
     async def delete(self, privilege_history_id: int):
         privilege_history = await self._privilegeHistoryCRUD.get_by_id(privilege_history_id)
         if privilege_history == None:
-            raise NotFoundException(
-                prefix="Delete Privilege History",
-                search_field="id"
-            )
+            raise NotFoundException(prefix="Delete Privilege History")

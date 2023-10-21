@@ -1,11 +1,31 @@
 version: '3.1'
 
 services:
+  bonus_database:
+    image: postgres:16-alpine
+    container_name: bonus_database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=bonus_db
+    volumes:
+      - ./pg_data_bonus:/var/lib/postgresql/data
+      - ./bonus_service/sql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 15s
+      timeout: 7s
+      retries: 10
+
   flight_database:
     image: postgres:16-alpine
     container_name: flight_database
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -17,15 +37,15 @@ services:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 12s
-      timeout: 5s
+      interval: 15s
+      timeout: 7s
       retries: 10
 
   ticket_database:
     image: postgres:16-alpine
     container_name: ticket_database
     ports:
-      - "5433:5432"
+      - "5434:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -37,10 +57,24 @@ services:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 12s
-      timeout: 5s
+      interval: 15s
+      timeout: 7s
       retries: 10
-  
+
+  bonus_service:
+    image: bonus_service
+    container_name: bonus_service
+    build:
+      context: "."
+      dockerfile: ./bonus_service/Dockerfile
+    ports:
+      - "8050:8050"
+    networks:
+      - default
+    depends_on:
+      bonus_database:
+        condition: service_healthy
+
   flight_service:
     image: flight_service
     container_name: flight_service
@@ -70,6 +104,8 @@ services:
         condition: service_healthy
 
 volumes:
+  pg_data_bonus:
+    driver: local
   pg_data_flight:
     driver: local
   pg_data_ticket:

@@ -18,10 +18,14 @@ class ConflictException(HTTPException):
     def __init__(
         self,
         prefix: str,
+        message: str | None = None,
         headers: dict[str, str] | None = None
     ) -> None:
+        if message == None:
+            message = "объект с таким(и) атрибутом(ами) уже существует"
+
         super().__init__(
             status_code=status.HTTP_409_CONFLICT, 
-            detail=f"{prefix}: объект с таким(и) атрибутом(ами) уже существует", 
+            detail=f"{prefix}: {message}", 
             headers=headers
         )
