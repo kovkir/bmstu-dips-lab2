@@ -141,7 +141,7 @@ async def remove_ticket_by_uid(
         status.HTTP_404_NOT_FOUND: RespEnum.NotFound.value,
     }
 )
-async def update_ticket_by_id(
+async def update_ticket_by_uid(
         db: Annotated[Session, Depends(get_db)], 
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
         ticket_uid: UUID,

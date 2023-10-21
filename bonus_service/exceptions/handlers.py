@@ -6,21 +6,21 @@ from fastapi.responses import JSONResponse
 
 
 async def http_exception_handler(
-    request: Request, 
-    exc: HTTPException
-):
+        request: Request, 
+        exc: HTTPException
+    ):
     return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "message": exc.detail
-        }
-    )
+            status_code=exc.status_code,
+            content={
+                "message": exc.detail
+            }
+        )
 
 
 async def request_validation_exception_handler(
-    request: Request, 
-    exc: RequestValidationError
-):
+        request: Request, 
+        exc: RequestValidationError
+    ):
     errors = jsonable_encoder(exc.errors())
     errors_details = []
 
@@ -33,9 +33,9 @@ async def request_validation_exception_handler(
         errors_details.append(details)
 
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content={
-            "message": "Invalid request",
-            "errors": errors_details
-        }
-    )
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "message": "Invalid request",
+                "errors": errors_details
+            }
+        )
