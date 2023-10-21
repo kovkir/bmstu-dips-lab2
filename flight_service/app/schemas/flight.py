@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr, conint, AwareDatetime
+from pydantic import BaseModel, constr, conint
 from datetime import datetime as dt
 
 

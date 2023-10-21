@@ -1,6 +1,6 @@
 from yaml import safe_load
 
-CONFIG_PATH = "../config.yaml"
+CONFIG_PATH = "config.yaml"
 
 
 def get_settings(config_name: str=CONFIG_PATH):

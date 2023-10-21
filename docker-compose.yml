@@ -17,8 +17,8 @@ services:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 15s
-      timeout: 7s
+      interval: 20s
+      timeout: 10s
       retries: 10
 
   flight_database:
@@ -37,8 +37,8 @@ services:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 15s
-      timeout: 7s
+      interval: 20s
+      timeout: 10s
       retries: 10
 
   ticket_database:
@@ -57,8 +57,8 @@ services:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 15s
-      timeout: 7s
+      interval: 20s
+      timeout: 10s
       retries: 10
 
   bonus_service:
@@ -66,7 +66,7 @@ services:
     container_name: bonus_service
     build:
       context: "."
-      dockerfile: ./bonus_service/Dockerfile
+      dockerfile: ./docker/bonus.Dockerfile
     ports:
       - "8050:8050"
     networks:
@@ -80,7 +80,7 @@ services:
     container_name: flight_service
     build:
       context: "."
-      dockerfile: ./flight_service/Dockerfile
+      dockerfile: ./docker/flight.Dockerfile
     ports:
       - "8060:8060"
     networks:
@@ -94,7 +94,7 @@ services:
     container_name: ticket_service
     build:
       context: "."
-      dockerfile: ./ticket_service/Dockerfile
+      dockerfile: ./docker/ticket.Dockerfile
     ports:
       - "8070:8070"
     networks:
@@ -102,6 +102,17 @@ services:
     depends_on:
       ticket_database:
         condition: service_healthy
+
+  gateway_service:
+    image: gateway_service
+    container_name: gateway_service
+    build:
+      context: "."
+      dockerfile: ./docker/gateway.Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - default
 
 volumes:
   pg_data_bonus:
