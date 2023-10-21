@@ -5,8 +5,8 @@ __pycache__/
 
 venv/
 
-db_data_flight/
-db_data_ticket/
+pg_data_flight/
+pg_data_ticket/
+pg_data_bonus/
 
 docs/key.pem
-

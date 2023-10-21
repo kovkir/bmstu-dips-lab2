@@ -9,6 +9,11 @@ class PrivilegeBase(BaseModel):
     balance: int | None = None
 
 
+class PrivilegeFilter(BaseModel):
+    username: constr(max_length=80) | None = None
+    status: PrivilegeStatus | None = None
+    
+
 class PrivilegeUpdate(BaseModel):
     status: PrivilegeStatus | None = None
     balance: int | None = None

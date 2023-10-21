@@ -43,8 +43,9 @@ class PrivilegeHistoryCRUD(IPrivilegeHistoryCRUD):
         ):
         if privilege_history_filter.privilege_id:
             privilege_histories = privilege_histories.filter(
-                PrivilegeHistoryModel.username == \
-                    privilege_history_filter.username)
+                PrivilegeHistoryModel.privilege_id == \
+                    privilege_history_filter.privilege_id
+            )
 
         return privilege_histories
     

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from abc import ABC, abstractmethod
 
 from models.privilege import PrivilegeModel
-from schemas.privilege import PrivilegeUpdate
+from schemas.privilege import PrivilegeUpdate, PrivilegeFilter
 
 
 class IPrivilegeCRUD(ABC):
@@ -12,6 +12,7 @@ class IPrivilegeCRUD(ABC):
     @abstractmethod
     async def get_all(
             self,
+            privilege_filter: PrivilegeFilter,
             offset: int = 0,
             limit: int = 100
         ) -> list[PrivilegeModel]:
@@ -19,10 +20,6 @@ class IPrivilegeCRUD(ABC):
     
     @abstractmethod
     async def get_by_id(self, privilege_id: int) -> PrivilegeModel | None:
-        pass
-
-    @abstractmethod
-    async def get_by_username(self, username: str) -> PrivilegeModel | None:
         pass
 
     @abstractmethod

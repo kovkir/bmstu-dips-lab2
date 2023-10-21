@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.privilege import PrivilegeModel
-from schemas.privilege import PrivilegeCreate, PrivilegeUpdate
+from schemas.privilege import PrivilegeCreate, PrivilegeUpdate, PrivilegeFilter
 from exceptions.http_exceptions import NotFoundException, ConflictException
 from cruds.interfaces.privilege import IPrivilegeCRUD
 
@@ -12,10 +12,12 @@ class PrivilegeService():
         
     async def get_all(
             self,
+            privilege_filter: PrivilegeFilter,
             page: int = 0,
             size: int = 100
         ):
         return await self._privilegeCRUD.get_all(
+                privilege_filter=privilege_filter,
                 offset=page * size, 
                 limit=size
             )
@@ -23,20 +25,7 @@ class PrivilegeService():
     async def get_by_id(self, privilege_id: int):
         privilege = await self._privilegeCRUD.get_by_id(privilege_id)
         if privilege == None:
-            raise NotFoundException(
-                prefix="Get Privilege",
-                search_field="id"
-            )
-        
-        return privilege
-    
-    async def get_by_username(self, username: str):
-        privilege = await self._privilegeCRUD.get_by_username(username)
-        if privilege == None:
-            raise NotFoundException(
-                prefix="Get Privilege",
-                search_field="username"
-            )
+            raise NotFoundException(prefix="Get Privilege")
         
         return privilege
     
@@ -51,20 +40,14 @@ class PrivilegeService():
     async def delete(self, privilege_id: int):
         privilege = await self._privilegeCRUD.get_by_id(privilege_id)
         if privilege == None:
-            raise NotFoundException(
-                prefix="Delete Privilege",
-                search_field="id"
-            )
+            raise NotFoundException(prefix="Delete Privilege")
         
         return await self._privilegeCRUD.delete(privilege)
 
     async def patch(self, privilege_id: int, privilege_update: PrivilegeUpdate):
         privilege = await self._privilegeCRUD.get_by_id(privilege_id)
         if privilege == None:
-            raise NotFoundException(
-                prefix="Update Privilege",
-                search_field="id"
-            )
+            raise NotFoundException(prefix="Update Privilege")
     
         privilege = await self._privilegeCRUD.patch(privilege, privilege_update)
         if privilege == None:
