@@ -10,8 +10,8 @@ class FlightBase(BaseModel):
     flight_number: constr(max_length=20)
     price: conint(ge=1)
     datetime: dt
-    from_airport_id: conint(ge=1) | None = None
-    to_airport_id: conint(ge=1) | None = None
+    from_airport_id: conint(ge=1) | None
+    to_airport_id: conint(ge=1) | None
 
 
 class FlightFilter(BaseModel):
@@ -24,7 +24,8 @@ class FlightFilter(BaseModel):
 
 
 class FlightCreate(FlightBase):
-    pass
+    from_airport_id: conint(ge=1) | None = None
+    to_airport_id: conint(ge=1) | None = None
 
 
 class Flight(FlightBase):

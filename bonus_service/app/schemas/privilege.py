@@ -5,8 +5,8 @@ from enums.status import PrivilegeStatus
 
 class PrivilegeBase(BaseModel):
     username: constr(max_length=80)
-    status: PrivilegeStatus = 'BRONZE'
-    balance: conint(ge=0) | None = None
+    status: PrivilegeStatus
+    balance: conint(ge=0) | None
 
 
 class PrivilegeFilter(BaseModel):
@@ -20,7 +20,8 @@ class PrivilegeUpdate(BaseModel):
 
 
 class PrivilegeCreate(PrivilegeBase):
-    pass
+    status: PrivilegeStatus = 'BRONZE'
+    balance: conint(ge=0) | None = None
 
 
 class Privilege(PrivilegeBase):

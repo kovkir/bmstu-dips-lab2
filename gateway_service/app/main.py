@@ -38,7 +38,7 @@ def custom_openapi():
 
 
 app = FastAPI(
-    title="OpenAPI definition",
+    title="Flight Booking System",
     version="v1",
 )
 app.include_router(api_router, prefix="/api/v1")

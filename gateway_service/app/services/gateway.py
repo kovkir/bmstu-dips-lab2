@@ -1,5 +1,4 @@
 from requests import Response
-from json import loads
 
 from schemas.flight import FlightsList, Flight
 from exceptions.http_exceptions import NotFoundException, ConflictException
@@ -17,26 +16,26 @@ class GatewayService():
         response: Response = await self._flightCRUD.get_all_flights(page, size)
         flights_list = response.json()
 
-        items = []
+        flights = []
         for flight_dict in flights_list:
-            fromAirport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
-            toAirport = await self.__get_airport_by_id(flight_dict["to_airport_id"])
+            from_airport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
+            to_airport = await self.__get_airport_by_id(flight_dict["to_airport_id"])
 
-            items.append(
+            flights.append(
                 Flight(
                     flightNumber=flight_dict["flight_number"],
                     price=flight_dict["price"],
                     datetime=flight_dict["datetime"],
-                    fromAirport=fromAirport,
-                    toAirport=toAirport
+                    fromAirport=from_airport,
+                    toAirport=to_airport
                 )
             )
 
         return FlightsList(
                 page=page,
                 pageSize=size,
-                totalElements=len(items),
-                items=items
+                totalElements=len(flights),
+                items=flights
             )
     
     async def __get_airport_by_id(self, airport_id: int):

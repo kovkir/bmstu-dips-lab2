@@ -13,11 +13,11 @@ class PrivilegeHistoryBase(BaseModel):
 
 
 class PrivilegeHistoryFilter(BaseModel):
-    privilege_id: int | None
+    privilege_id: int | None = None
 
 
 class PrivilegeHistoryCreate(PrivilegeHistoryBase):
-    pass
+    privilege_id: int | None = None
 
 
 class PrivilegeHistory(PrivilegeHistoryBase):
