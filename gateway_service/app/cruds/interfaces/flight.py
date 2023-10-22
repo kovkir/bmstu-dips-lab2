@@ -4,9 +4,14 @@ from requests import Response
 
 class IFlightCRUD(ABC):
     @abstractmethod
-    async def get_all_flights(self, page: int, size: int) -> Response:
+    async def get_all_flights(
+            self, 
+            page: int = 0, 
+            size: int = 100,
+            flight_number: str | None = None
+        ) -> list[dict]:
        pass
     
     @abstractmethod
-    async def get_airport_by_id(self, airport_id: int) -> Response:
+    async def get_airport_by_id(self, airport_id: int) -> dict:
         pass

@@ -25,6 +25,9 @@ restart:
 	docker rmi gateway_service; \
 	docker-compose up -d
 
+logs:
+	docker logs gateway_service
+	
 # run-tests:
 # 	pytest -vs unit_tests/flight.py
 
