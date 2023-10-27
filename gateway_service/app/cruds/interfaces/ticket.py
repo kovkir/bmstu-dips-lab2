@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from requests import Response
+
+from schemas.ticket import TicketCreate
 
 
 class ITicketCRUD(ABC):
@@ -10,8 +11,13 @@ class ITicketCRUD(ABC):
             size: int = 100,
             username: str | None = None
         ) -> list[dict]:
-       pass
+        pass
 
     @abstractmethod
     async def get_ticket_by_uid(self, ticket_uid: str) -> dict:
         pass
+    
+    @abstractmethod
+    async def create_new_ticket(self, ticket_create: TicketCreate) -> str:
+        pass
+    

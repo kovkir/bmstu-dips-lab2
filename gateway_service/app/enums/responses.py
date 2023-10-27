@@ -2,7 +2,7 @@ from enum import Enum
 
 from schemas.response import ErrorResponse, ValidationErrorResponse
 from schemas.flight import FlightList
-from schemas.ticket import Ticket
+from schemas.ticket import Ticket, TicketPurchaseResponse
 
 
 class RespEnum(Enum):
@@ -13,6 +13,10 @@ class RespEnum(Enum):
     GetAllTickets = {
         "model": list[Ticket],
         "description": "Информация по всем билетам пользователя",
+    }
+    BuyTicket = {
+        "model": TicketPurchaseResponse,
+        "description": "Информация о купленном билете",
     }
 
     InvalidData = {

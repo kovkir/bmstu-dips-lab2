@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from requests import Response
 
 
 class IFlightCRUD(ABC):
@@ -10,7 +9,7 @@ class IFlightCRUD(ABC):
             size: int = 100,
             flight_number: str | None = None
         ) -> list[dict]:
-       pass
+        pass
     
     @abstractmethod
     async def get_airport_by_id(self, airport_id: int) -> dict:

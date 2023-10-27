@@ -5,7 +5,7 @@ down:
 info:
 	docker ps -a
 
-delete-images:
+delete-services:
 	docker rmi bonus_service; \
 	docker rmi flight_service; \
 	docker rmi ticket_service; \

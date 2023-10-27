@@ -1,10 +1,14 @@
+import json
 import requests
 from requests import Response
 
 from utils.settings import get_settings
+from schemas.ticket import TicketCreate
+from cruds.interfaces.ticket import ITicketCRUD
+from cruds.base import BaseCRUD
 
 
-class TicketCRUD():
+class TicketCRUD(ITicketCRUD, BaseCRUD):
     def __init__(self):
         settings = get_settings()
         ticket_host = settings["services"]["gateway"]["ticket_host"]
@@ -22,10 +26,26 @@ class TicketCRUD():
             url=f'{self.http_path}tickets/?page={page}&size={size}'
                 f'{f"&username={username}" if username else ""}'
         )
+        self._check_status_code(response.status_code)
+        
         return response.json()
     
     async def get_ticket_by_uid(self, ticket_uid: str):
         response: Response = requests.get(
             url=f'{self.http_path}tickets/{ticket_uid}/'
         )
+        self._check_status_code(response.status_code)
+        
         return response.json()
+    
+    async def create_new_ticket(self, ticket_create: TicketCreate):
+        response: Response = requests.post(
+            url=f'{self.http_path}tickets/',
+            data=json.dumps(ticket_create.model_dump())
+        )
+        self._check_status_code(response.status_code)
+        
+        location: str = response.headers["location"]
+        uid = location.split("/")[-1]
+
+        return uid
