@@ -18,7 +18,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 20s
-      timeout: 10s
+      timeout: 15s
       retries: 10
 
   flight_database:
@@ -38,7 +38,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 20s
-      timeout: 10s
+      timeout: 15s
       retries: 10
 
   ticket_database:
@@ -58,7 +58,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 20s
-      timeout: 10s
+      timeout: 15s
       retries: 10
 
   bonus_service:

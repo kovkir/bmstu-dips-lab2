@@ -87,8 +87,30 @@ class GatewayService():
 
         return tickets
     
+    async def get_info_on_user_ticket(self, user_name: str, ticket_uid: str):
+        ticket_dict = await self._ticketCRUD.get_ticket_by_uid(ticket_uid)
+        if not ticket_dict or ticket_dict["username"] != user_name:
+            raise NotFoundException(
+                prefix="Get Ticket",
+                message="Билета с таким UUID не существует"
+            )
+        
+        flight_dict  = await self.__get_flight_by_number(ticket_dict["flight_number"])
+        from_airport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
+        to_airport   = await self.__get_airport_by_id(flight_dict["to_airport_id"])
+
+        return Ticket(
+                ticketUid=ticket_dict["ticket_uid"],
+                flightNumber=ticket_dict["flight_number"],
+                fromAirport=from_airport,
+                toAirport=to_airport,
+                date=flight_dict["datetime"],
+                price=ticket_dict["price"],
+                status=ticket_dict["status"],
+            )
+    
     async def buy_ticket(
-            self, 
+            self,
             user_name: str,
             ticket_purchase_request: TicketPurchaseRequest
         ):
@@ -128,10 +150,13 @@ class GatewayService():
                 paid_by_money=paid_by_money
             )
 
+        from_airport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
+        to_airport = await self.__get_airport_by_id(flight_dict["to_airport_id"])
+
         return TicketPurchaseResponse(
                 ticketUid=ticket_dict["ticket_uid"],
-                fromAirport=await self.__get_airport_by_id(flight_dict["from_airport_id"]),
-                toAirport=await self.__get_airport_by_id(flight_dict["to_airport_id"]),
+                fromAirport=from_airport,
+                toAirport=to_airport,
                 date=flight_dict["datetime"],
                 price=ticket_purchase_request.price,
                 paidByMoney=paid_by_money,

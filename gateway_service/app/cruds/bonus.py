@@ -1,6 +1,7 @@
 import json
 import requests
 from requests import Response
+from fastapi import status
 
 from utils.settings import get_settings
 from cruds.interfaces.bonus import IBonusCRUD
@@ -38,7 +39,10 @@ class BonusCRUD(IBonusCRUD, BaseCRUD):
         response: Response = requests.get(
             url=f'{self.http_path}privileges/{privilege_id}/'
         )
-        self._check_status_code(response.status_code)
+        if response.status_code == status.HTTP_404_NOT_FOUND:
+            return None
+        else:
+            self._check_status_code(response.status_code)
 
         return response.json()
     

@@ -1,6 +1,7 @@
 import json
 import requests
 from requests import Response
+from fastapi import status
 
 from utils.settings import get_settings
 from schemas.ticket import TicketCreate
@@ -34,8 +35,11 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
         response: Response = requests.get(
             url=f'{self.http_path}tickets/{ticket_uid}/'
         )
-        self._check_status_code(response.status_code)
-        
+        if response.status_code == status.HTTP_404_NOT_FOUND:
+            return None
+        else:
+            self._check_status_code(response.status_code)
+
         return response.json()
     
     async def create_new_ticket(self, ticket_create: TicketCreate):

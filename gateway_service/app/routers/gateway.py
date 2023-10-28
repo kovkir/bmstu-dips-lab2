@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, status, Query, Header
-from fastapi.responses import Response
 from typing import Annotated
 
 from schemas.flight import FlightList
@@ -69,7 +68,7 @@ async def get_information_on_all_user_tickets(
         flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
         bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
-        X_User_Name: Annotated[str, Header(max_length=80)],
+        X_User_Name: Annotated[str, Header(max_length=80)]
     ):
     return await GatewayService(
             flightCRUD=flightCRUD,
@@ -79,12 +78,40 @@ async def get_information_on_all_user_tickets(
             user_name=X_User_Name
         )
 
+
+@router.get(
+    "/tickets/{ticketUid}", 
+    status_code=status.HTTP_200_OK,
+    response_model=Ticket,
+    responses={
+        status.HTTP_200_OK: RespEnum.GetTicket.value,
+        status.HTTP_404_NOT_FOUND: RespEnum.TicketNotFound.value,
+    }
+)
+async def get_information_on_user_ticket(
+        flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
+        ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
+        bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
+        X_User_Name: Annotated[str, Header(max_length=80)],
+        ticketUid: str
+    ):
+    return await GatewayService(
+            flightCRUD=flightCRUD,
+            ticketCRUD=ticketCRUD,
+            bonusCRUD=bonusCRUD
+        ).get_info_on_user_ticket(
+            user_name=X_User_Name,
+            ticket_uid=ticketUid
+        )
+
+
 @router.post(
     "/tickets", 
     status_code=status.HTTP_200_OK,
     response_model=TicketPurchaseResponse,
     responses={
         status.HTTP_200_OK: RespEnum.BuyTicket.value,
+        status.HTTP_404_NOT_FOUND: RespEnum.FlightNumberNotFound.value,
     }
 )
 async def buy_ticket(

@@ -14,4 +14,3 @@ class PrivilegeStatus(str, Enum):
 class PrivilegeHistoryStatus(str, Enum):
     FILL_IN_BALANCE = 'FILL_IN_BALANCE'
     DEBIT_THE_ACCOUNT = 'DEBIT_THE_ACCOUNT'
-    
