@@ -1,5 +1,4 @@
 from pydantic import BaseModel, conint, constr
-from uuid import UUID
 
 from enums.status import PrivilegeHistoryStatus, PrivilegeStatus
 
@@ -15,8 +14,12 @@ class PrivilegeCreate(BaseModel):
     balance: conint(ge=0) | None = None
 
 
+class PrivilegeUpdate(BaseModel):
+    status: PrivilegeStatus | None = None
+    balance: conint(ge=0) | None = None
+
 class PrivilegeHistoryCreate(BaseModel):
     privilege_id: int | None
-    ticket_uid: UUID
+    ticket_uid: str
     balance_diff: int
     operation_type: PrivilegeHistoryStatus

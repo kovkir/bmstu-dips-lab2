@@ -5,7 +5,11 @@ from requests import Response
 from utils.settings import get_settings
 from cruds.interfaces.bonus import IBonusCRUD
 from cruds.base import BaseCRUD
-from schemas.bonus import PrivilegeHistoryCreate, PrivilegeCreate
+from schemas.bonus import (
+    PrivilegeHistoryCreate, 
+    PrivilegeCreate, 
+    PrivilegeUpdate
+)
 
 
 class BonusCRUD(IBonusCRUD, BaseCRUD):
@@ -50,10 +54,26 @@ class BonusCRUD(IBonusCRUD, BaseCRUD):
 
         return id_
     
-    async def create_new_privilege_history(self, history_create: PrivilegeHistoryCreate):
+    async def update_privilege_by_id(
+            self, 
+            privilege_id: int,
+            privilege_update: PrivilegeUpdate
+        ):
+        response: Response = requests.patch(
+            url=f'{self.http_path}privileges/{privilege_id}/',
+            data=json.dumps(privilege_update.model_dump(exclude_unset=True))
+        )
+        self._check_status_code(response.status_code)
+
+        return response.json()
+    
+    async def create_new_privilege_history(
+            self, 
+            privilege_history_create: PrivilegeHistoryCreate
+        ):
         response: Response = requests.post(
             url=f'{self.http_path}privilege_histories/',
-            data=json.dumps(history_create.model_dump())
+            data=json.dumps(privilege_history_create.model_dump(exclude_unset=True))
         )
         self._check_status_code(response.status_code)
         

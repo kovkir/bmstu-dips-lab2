@@ -41,7 +41,7 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
     async def create_new_ticket(self, ticket_create: TicketCreate):
         response: Response = requests.post(
             url=f'{self.http_path}tickets/',
-            data=json.dumps(ticket_create.model_dump())
+            data=json.dumps(ticket_create.model_dump(exclude_unset=True))
         )
         self._check_status_code(response.status_code)
         

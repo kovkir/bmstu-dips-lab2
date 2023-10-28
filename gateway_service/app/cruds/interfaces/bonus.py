@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 
-from schemas.bonus import PrivilegeHistoryCreate, PrivilegeCreate
+from schemas.bonus import (
+    PrivilegeHistoryCreate, 
+    PrivilegeCreate,
+    PrivilegeUpdate
+)
 
 
 class IBonusCRUD(ABC):
@@ -20,7 +24,18 @@ class IBonusCRUD(ABC):
     @abstractmethod
     async def create_new_privilege(self, privilege_create: PrivilegeCreate) -> int:
         pass
-
+    
     @abstractmethod
-    async def create_new_privilege_history(self, history_create: PrivilegeHistoryCreate) -> int:
+    async def update_privilege_by_id(
+            self, 
+            privilege_id: int,
+            privilege_update: PrivilegeUpdate
+        ) -> dict:
+        pass
+    
+    @abstractmethod
+    async def create_new_privilege_history(
+            self, 
+            privilege_history_create: PrivilegeHistoryCreate
+        ) -> int:
         pass

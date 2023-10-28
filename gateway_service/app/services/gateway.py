@@ -1,15 +1,18 @@
+from uuid import UUID
+
 from cruds.interfaces.flight import IFlightCRUD
 from cruds.interfaces.ticket import ITicketCRUD
 from cruds.interfaces.bonus import IBonusCRUD
 from exceptions.http_exceptions import NotFoundException
-from enums.status import TicketStatus
+from enums.status import TicketStatus, PrivilegeHistoryStatus, PrivilegeStatus
 from schemas.flight import (
     FlightList, 
     Flight
 )
 from schemas.bonus import (
     PrivilegeShortInfo, 
-    PrivilegeCreate, 
+    PrivilegeCreate,
+    PrivilegeUpdate,
     PrivilegeHistoryCreate
 )
 from schemas.ticket import (
@@ -89,16 +92,20 @@ class GatewayService():
             user_name: str,
             ticket_purchase_request: TicketPurchaseRequest
         ):
-        flight_dict = await self.__get_flight_by_number(ticket_purchase_request.flightNumber)
-        if  flight_dict == None:
+        flight_dict = await self.__get_flight_by_number(
+            ticket_purchase_request.flightNumber
+        )
+        if flight_dict == None:
             raise NotFoundException(
                 prefix="Buy Ticket",
                 message="Рейса с таким номером не существует"
             )
         
-        paid_by_bonuses, paid_by_money, privilege = await self.__paid_ticket(
-            user_name=user_name,
+        privilege_dict = await self.__get_privilege_by_username(user_name)
+
+        paid_by_bonuses, paid_by_money = await self.__paid_ticket(
             price=ticket_purchase_request.price,
+            balance=privilege_dict["balance"],
             paid_from_balance=ticket_purchase_request.paidFromBalance
         )
 
@@ -107,6 +114,19 @@ class GatewayService():
             flight_number=ticket_purchase_request.flightNumber,
             price=paid_by_money
         )
+
+        if ticket_purchase_request.paidFromBalance:
+            updated_privilege = await self.__write_off_bonuses(
+                privilege_dict=privilege_dict,
+                ticket_uid=ticket_dict["ticket_uid"],
+                paid_by_bonuses=paid_by_bonuses
+            )
+        else:
+            updated_privilege = await self.__add_bonuses(
+                privilege_dict=privilege_dict,
+                ticket_uid=ticket_dict["ticket_uid"],
+                paid_by_money=paid_by_money
+            )
 
         return TicketPurchaseResponse(
                 ticketUid=ticket_dict["ticket_uid"],
@@ -117,46 +137,109 @@ class GatewayService():
                 paidByMoney=paid_by_money,
                 paidByBonuses=paid_by_bonuses,
                 status=ticket_dict["status"],
-                privilege=privilege
+                privilege=PrivilegeShortInfo(**updated_privilege)
             )
-        
+    
+    async def __write_off_bonuses(
+            self,
+            privilege_dict: dict,
+            ticket_uid: UUID,
+            paid_by_bonuses: int
+        ):
+        if paid_by_bonuses > privilege_dict["balance"]:
+            balance_diff = privilege_dict["balance"]
+        else:
+            balance_diff = paid_by_bonuses
+
+        updated_privilege = await self._bonusCRUD.update_privilege_by_id(
+            privilege_id=privilege_dict["id"],
+            privilege_update=PrivilegeUpdate(
+                balance=privilege_dict["balance"] - balance_diff
+            )
+        )
+
+        await self._bonusCRUD.create_new_privilege_history(
+            PrivilegeHistoryCreate(
+                privilege_id=privilege_dict["id"],
+                ticket_uid=ticket_uid,
+                balance_diff=balance_diff,
+                operation_type=PrivilegeHistoryStatus.DEBIT_THE_ACCOUNT.value
+            )
+        )
+
+        return updated_privilege
+
+    async def __add_bonuses(self,
+            privilege_dict: dict,
+            ticket_uid: UUID,
+            paid_by_money: int
+        ):
+        if privilege_dict["status"] == PrivilegeStatus.GOLD.value:
+            coeff = 0.1
+        elif privilege_dict["status"] == PrivilegeStatus.SILVER.value:
+            coeff = 0.1
+        else:
+            coeff = 0.1
+
+        balance_diff = round(paid_by_money * coeff)
+
+        updated_privilege = await self._bonusCRUD.update_privilege_by_id(
+            privilege_id=privilege_dict["id"],
+            privilege_update=PrivilegeUpdate(
+                balance=privilege_dict["balance"] + balance_diff
+            )
+        )
+
+        await self._bonusCRUD.create_new_privilege_history(
+            PrivilegeHistoryCreate(
+                privilege_id=privilege_dict["id"],
+                ticket_uid=ticket_uid,
+                balance_diff=balance_diff,
+                operation_type=PrivilegeHistoryStatus.FILL_IN_BALANCE.value
+            )
+        )
+
+        return updated_privilege
+
     async def __paid_ticket(
             self, 
-            user_name: str, 
             price: int, 
+            balance: int, 
             paid_from_balance: bool
         ):
-        privilege_dict = await self.__get_privilege_by_username(user_name)
-        if privilege_dict == None:
-            privilege_dict = await self.__get_new_privilege(user_name)
+        paid_by_bonuses = min(price, balance) if paid_from_balance else 0
+        paid_by_money = price - paid_by_bonuses
+
+        return paid_by_bonuses, paid_by_money
         
-        if paid_from_balance:
-            paid_by_bonuses = min(price, privilege_dict["balance"])
-            paid_by_money = price - paid_by_bonuses
-            privilege = PrivilegeShortInfo(
-                balance=privilege_dict["balance"] - paid_by_bonuses,
-                status=privilege_dict["status"]
-            )
-
-            # await self.__add_bonuses()
+    async def __get_airport_by_id(self, airport_id: int):
+        if airport_id:
+            airport_dict = await self._flightCRUD.get_airport_by_id(airport_id)
+            airport = f"{airport_dict['city']} {airport_dict['name']}"
         else:
-            paid_by_bonuses = 0
-            paid_by_money = price
-            privilege = PrivilegeShortInfo(
-                balance=privilege_dict["balance"] - paid_by_bonuses,
-                status=privilege_dict["status"]
-            )
+            airport = None
 
-            # await self.__write_off_bonuses()
+        return airport
+    
+    async def __get_flight_by_number(self, flight_number: str):
+        flight_list = await self._flightCRUD.get_all_flights(
+            flight_number=flight_number
+        )
+        flight_dict = flight_list[0] if len(flight_list) else None
 
-        return paid_by_bonuses, paid_by_money, privilege
+        return flight_dict
+    
+    async def __get_privilege_by_username(self, username: str):
+        privilege_list = await self._bonusCRUD.get_all_privileges(
+            username=username
+        )
+        if len(privilege_list):
+            privilege_dict = privilege_list[0]
+        else:
+            privilege_dict = await self.__get_new_privilege(username)
 
-    # async def __write_off_bonuses(self):
-    #     pass
-
-    # async def __add_bonuses(self):
-    #     pass
-
+        return privilege_dict
+    
     async def __get_new_privilege(self, username: str):
         privilege_id = await self._bonusCRUD.create_new_privilege(
             PrivilegeCreate(
@@ -180,28 +263,3 @@ class GatewayService():
         ticket_dict = await self._ticketCRUD.get_ticket_by_uid(ticket_uid)
 
         return ticket_dict
-        
-    async def __get_airport_by_id(self, airport_id: int):
-        if airport_id:
-            airport_dict = await self._flightCRUD.get_airport_by_id(airport_id)
-            airport = f"{airport_dict['city']} {airport_dict['name']}"
-        else:
-            airport = None
-
-        return airport
-    
-    async def __get_flight_by_number(self, flight_number: str):
-        flight_list = await self._flightCRUD.get_all_flights(
-            flight_number=flight_number
-        )
-        flight_dict = flight_list[0] if len(flight_list) else None
-
-        return flight_dict
-    
-    async def __get_privilege_by_username(self, username: str):
-        privilege_list = await self._bonusCRUD.get_all_privileges(
-            username=username
-        )
-        privilege_dict = privilege_list[0] if len(privilege_list) else None
-
-        return privilege_dict
