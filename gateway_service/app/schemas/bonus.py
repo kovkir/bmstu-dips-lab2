@@ -19,6 +19,7 @@ class PrivilegeUpdate(BaseModel):
     status: PrivilegeStatus | None = None
     balance: conint(ge=0) | None = None
 
+
 class PrivilegeHistoryCreate(BaseModel):
     privilege_id: int | None
     ticket_uid: UUID

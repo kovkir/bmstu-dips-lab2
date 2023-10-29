@@ -5,9 +5,10 @@ from cruds.interfaces.ticket import ITicketCRUD
 from cruds.interfaces.bonus import IBonusCRUD
 from exceptions.http_exceptions import NotFoundException
 from enums.status import TicketStatus, PrivilegeHistoryStatus, PrivilegeStatus
+from schemas.user import UserInfoResponse
 from schemas.flight import (
-    FlightList, 
-    Flight
+    PaginationResponse, 
+    FlightResponse
 )
 from schemas.bonus import (
     PrivilegeShortInfo, 
@@ -17,7 +18,7 @@ from schemas.bonus import (
     PrivilegeHistoryFilter
 )
 from schemas.ticket import (
-    Ticket,
+    TicketResponse,
     TicketCreate, 
     TicketUpdate,
     TicketPurchaseRequest, 
@@ -48,7 +49,7 @@ class GatewayService():
             to_airport = await self.__get_airport_by_id(flight_dict["to_airport_id"])
 
             flights.append(
-                Flight(
+                FlightResponse(
                     flightNumber=flight_dict["flight_number"],
                     fromAirport=from_airport,
                     toAirport=to_airport,
@@ -57,7 +58,7 @@ class GatewayService():
                 )
             )
 
-        return FlightList(
+        return PaginationResponse(
                 page=page,
                 pageSize=size,
                 totalElements=len(flights),
@@ -76,7 +77,7 @@ class GatewayService():
             to_airport   = await self.__get_airport_by_id(flight_dict["to_airport_id"])
 
             tickets.append(
-                Ticket(
+                TicketResponse(
                     ticketUid=ticket_dict["ticket_uid"],
                     flightNumber=ticket_dict["flight_number"],
                     fromAirport=from_airport,
@@ -101,7 +102,7 @@ class GatewayService():
         from_airport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
         to_airport   = await self.__get_airport_by_id(flight_dict["to_airport_id"])
 
-        return Ticket(
+        return TicketResponse(
                 ticketUid=ticket_dict["ticket_uid"],
                 flightNumber=ticket_dict["flight_number"],
                 fromAirport=from_airport,
@@ -159,6 +160,7 @@ class GatewayService():
 
         return TicketPurchaseResponse(
                 ticketUid=ticket_dict["ticket_uid"],
+                flightNumber=flight_dict["flight_number"],
                 fromAirport=from_airport,
                 toAirport=to_airport,
                 date=flight_dict["datetime"],
@@ -208,6 +210,15 @@ class GatewayService():
             )
 
         return updated_ticket_dict
+    
+    async def get_user_information(self, user_name: str):
+        tickets = await self.get_info_on_all_user_tickets(user_name)
+        privilege_dict = await self.__get_privilege_by_username(user_name)
+
+        return UserInfoResponse(
+                tickets=tickets,
+                privilege=privilege_dict
+            )
     
     async def __write_off_bonuses(
             self,

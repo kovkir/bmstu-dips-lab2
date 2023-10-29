@@ -6,11 +6,11 @@ from enums.status import TicketStatus
 from schemas.bonus import PrivilegeShortInfo
 
 
-def convert_datetime_to_iso_8601_without_time_zone(datetime: dt) -> str:
+def convert_datetime(datetime: dt) -> str:
     return datetime.strftime('%Y-%m-%d %H:%M')
 
 
-class Ticket(BaseModel):
+class TicketResponse(BaseModel):
     ticketUid: UUID
     flightNumber: constr(max_length=20)
     fromAirport: str | None
@@ -21,8 +21,7 @@ class Ticket(BaseModel):
 
     class Config:
         json_encoders = {
-            # custom output conversion for datetime
-            dt: convert_datetime_to_iso_8601_without_time_zone
+            dt: convert_datetime
         }
 
 
@@ -34,6 +33,7 @@ class TicketPurchaseRequest(BaseModel):
 
 class TicketPurchaseResponse(BaseModel):
     ticketUid: UUID
+    flightNumber: constr(max_length=20)
     fromAirport: str | None
     toAirport: str | None
     date: dt
@@ -41,7 +41,12 @@ class TicketPurchaseResponse(BaseModel):
     paidByMoney: conint(ge=0)
     paidByBonuses: conint(ge=0)
     status: TicketStatus
-    privilege: PrivilegeShortInfo | None
+    privilege: PrivilegeShortInfo
+
+    class Config:
+        json_encoders = {
+            dt: convert_datetime
+        }
 
 
 class TicketCreate(BaseModel):

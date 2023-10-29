@@ -3,8 +3,9 @@ from fastapi.responses import Response
 from typing import Annotated
 from uuid import UUID
 
-from schemas.flight import FlightList
-from schemas.ticket import Ticket, TicketPurchaseResponse, TicketPurchaseRequest
+from schemas.flight import PaginationResponse
+from schemas.ticket import TicketResponse, TicketPurchaseResponse, TicketPurchaseRequest
+from schemas.user import UserInfoResponse
 from services.gateway import GatewayService
 from enums.responses import RespEnum
 from cruds.interfaces.flight import IFlightCRUD
@@ -36,7 +37,7 @@ router = APIRouter(
 @router.get(
     "/flights", 
     status_code=status.HTTP_200_OK,
-    response_model=FlightList,
+    response_model=PaginationResponse,
     responses={
         status.HTTP_200_OK: RespEnum.GetAllFlights.value,
     }
@@ -61,7 +62,7 @@ async def get_list_of_flights(
 @router.get(
     "/tickets", 
     status_code=status.HTTP_200_OK,
-    response_model=list[Ticket],
+    response_model=list[TicketResponse],
     responses={
         status.HTTP_200_OK: RespEnum.GetAllTickets.value,
     }
@@ -84,7 +85,7 @@ async def get_information_on_all_user_tickets(
 @router.get(
     "/tickets/{ticketUid}", 
     status_code=status.HTTP_200_OK,
-    response_model=Ticket,
+    response_model=TicketResponse,
     responses={
         status.HTTP_200_OK: RespEnum.GetTicket.value,
         status.HTTP_404_NOT_FOUND: RespEnum.TicketNotFound.value,
@@ -160,4 +161,27 @@ async def ticket_refund(
     
     return Response(
             status_code=status.HTTP_204_NO_CONTENT
+        )
+
+
+@router.get(
+    "/me", 
+    status_code=status.HTTP_200_OK,
+    response_model=UserInfoResponse,
+    responses={
+        status.HTTP_200_OK: RespEnum.GetMe.value,
+    }
+)
+async def get_user_information(
+        flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
+        ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
+        bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
+        X_User_Name: Annotated[str, Header(max_length=80)],
+    ):
+    return await GatewayService(
+            flightCRUD=flightCRUD,
+            ticketCRUD=ticketCRUD,
+            bonusCRUD=bonusCRUD
+        ).get_user_information(
+            user_name=X_User_Name,
         )
