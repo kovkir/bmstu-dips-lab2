@@ -1,15 +1,13 @@
 from enum import Enum
 
 from schemas.response import ErrorResponse, ValidationErrorResponse
-from schemas.ticket import Ticket
+
 
 class RespEnum(Enum):
     GetAll = {
-        "model": list[Ticket],
         "description": "All Tickets",
     }
     GetByUID = {
-        "model": Ticket,
         "description": "Ticket by UID",
     }
     Created = {
@@ -38,7 +36,6 @@ class RespEnum(Enum):
         },
     }
     Patch = {
-        "model": Ticket,
         "description": "Ticket by UID was updated",
     }
 

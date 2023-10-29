@@ -1,17 +1,13 @@
 from enum import Enum
 
 from schemas.response import ErrorResponse, ValidationErrorResponse
-from schemas.airport import Airport
-from schemas.flight import Flight
 
 
 class RespFlightEnum(Enum):
     GetAll = {
-        "model": list[Flight],
         "description": "All Flights",
     }
     GetByID = {
-        "model": Flight,
         "description": "Flight by ID",
     }
     Created = {
@@ -40,7 +36,6 @@ class RespFlightEnum(Enum):
         },
     }
     Patch = {
-        "model": Flight,
         "description": "Flight by ID was updated",
     }
 
@@ -61,11 +56,9 @@ class RespFlightEnum(Enum):
 
 class RespAirportEnum(Enum):
     GetAll = {
-        "model": list[Airport],
         "description": "All Airports",
     }
     GetByID = {
-        "model": Airport,
         "description": "Airport by ID",
     }
     Created = {
@@ -94,7 +87,6 @@ class RespAirportEnum(Enum):
         },
     }
     Patch = {
-        "model": Airport,
         "description": "Airport by ID was updated",
     }
 

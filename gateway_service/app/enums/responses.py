@@ -1,26 +1,19 @@
 from enum import Enum
 
 from schemas.response import ErrorResponse, ValidationErrorResponse
-from schemas.flight import PaginationResponse
-from schemas.ticket import TicketResponse, TicketPurchaseResponse
-from schemas.user import UserInfoResponse
 
 
 class RespEnum(Enum):
     GetAllFlights = {
-        "model": PaginationResponse,
         "description": "Список рейсов",
     }
     GetAllTickets = {
-        "model": list[TicketResponse],
         "description": "Информация по всем билетам пользователя",
     }
     GetTicket = {
-        "model": TicketResponse,
         "description": "Информация по конкретному билету",
     }
     BuyTicket = {
-        "model": TicketPurchaseResponse,
         "description": "Информация о купленном билете",
     }
     TicketRefund = {
@@ -32,7 +25,6 @@ class RespEnum(Enum):
         },
     }
     GetMe = {
-        "model": UserInfoResponse,
         "description": "Полная информация о пользователе",
     }
 

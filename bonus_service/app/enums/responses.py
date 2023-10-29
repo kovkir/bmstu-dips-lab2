@@ -1,17 +1,13 @@
 from enum import Enum
 
 from schemas.response import ErrorResponse, ValidationErrorResponse
-from schemas.privilege_history import PrivilegeHistory
-from schemas.privilege import Privilege
 
 
 class RespPrivilegeEnum(Enum):
     GetAll = {
-        "model": list[Privilege],
         "description": "All Privileges",
     }
     GetByID = {
-        "model": Privilege,
         "description": "Privilege by ID",
     }
     Created = {
@@ -40,7 +36,6 @@ class RespPrivilegeEnum(Enum):
         },
     }
     Patch = {
-        "model": Privilege,
         "description": "Privilege by ID was updated",
     }
 
@@ -61,11 +56,9 @@ class RespPrivilegeEnum(Enum):
 
 class RespPrivilegeHistoryEnum(Enum):
     GetAll = {
-        "model": list[PrivilegeHistory],
         "description": "All Privilege Histories",
     }
     GetByID = {
-        "model": PrivilegeHistory,
         "description": "Privilege History by ID",
     }
     Created = {
@@ -94,7 +87,6 @@ class RespPrivilegeHistoryEnum(Enum):
         },
     }
     Patch = {
-        "model": PrivilegeHistory,
         "description": "Privilege History by ID was updated",
     }
 
