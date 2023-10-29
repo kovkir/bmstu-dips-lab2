@@ -27,6 +27,9 @@ class RespEnum(Enum):
     GetMe = {
         "description": "Полная информация о пользователе",
     }
+    GetPrivilege = {
+        "description": "Данные о бонусном счете",
+    }
 
     FlightNumberNotFound = {
         "model": ErrorResponse,

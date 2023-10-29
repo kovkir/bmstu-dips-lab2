@@ -5,6 +5,7 @@ from uuid import UUID
 
 from schemas.flight import PaginationResponse
 from schemas.ticket import TicketResponse, TicketPurchaseResponse, TicketPurchaseRequest
+from schemas.bonus import PrivilegeInfoResponse
 from schemas.user import UserInfoResponse
 from services.gateway import GatewayService
 from enums.responses import RespEnum
@@ -183,5 +184,28 @@ async def get_user_information(
             ticketCRUD=ticketCRUD,
             bonusCRUD=bonusCRUD
         ).get_user_information(
+            user_name=X_User_Name,
+        )
+
+
+@router.get(
+    "/privilege", 
+    status_code=status.HTTP_200_OK,
+    response_model=PrivilegeInfoResponse,
+    responses={
+        status.HTTP_200_OK: RespEnum.GetPrivilege.value,
+    }
+)
+async def get_information_about_bonus_account(
+        flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
+        ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
+        bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
+        X_User_Name: Annotated[str, Header(max_length=80)],
+    ):
+    return await GatewayService(
+            flightCRUD=flightCRUD,
+            ticketCRUD=ticketCRUD,
+            bonusCRUD=bonusCRUD
+        ).get_info_about_bonus_account(
             user_name=X_User_Name,
         )

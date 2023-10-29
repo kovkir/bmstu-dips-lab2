@@ -11,7 +11,9 @@ from schemas.flight import (
     FlightResponse
 )
 from schemas.bonus import (
-    PrivilegeShortInfo, 
+    PrivilegeShortInfo,
+    PrivilegeInfoResponse,
+    BalanceHistory,
     PrivilegeCreate,
     PrivilegeUpdate,
     PrivilegeHistoryCreate,
@@ -218,6 +220,31 @@ class GatewayService():
         return UserInfoResponse(
                 tickets=tickets,
                 privilege=privilege_dict
+            )
+    
+    async def get_info_about_bonus_account(self, user_name: str):
+        privilege_dict = await self.__get_privilege_by_username(user_name)
+        privilege_histories = await self._bonusCRUD.get_all_privilege_histories(
+            PrivilegeHistoryFilter(
+                privilege_id=privilege_dict["id"]
+            )
+        )
+
+        histories = []
+        for history in privilege_histories:
+            histories.append(
+                BalanceHistory(
+                    date=history["datetime"],
+                    ticketUid=history["ticket_uid"],
+                    balanceDiff=history["balance_diff"],
+                    operationType=history["operation_type"]
+                )
+            )
+
+        return PrivilegeInfoResponse(
+                balance=privilege_dict["balance"],
+                status=privilege_dict["status"],
+                history=histories
             )
     
     async def __write_off_bonuses(

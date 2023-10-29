@@ -1,12 +1,26 @@
 from pydantic import BaseModel, conint, constr
+from datetime import datetime as dt
 from uuid import UUID
 
 from enums.status import PrivilegeHistoryStatus, PrivilegeStatus
 
 
 class PrivilegeShortInfo(BaseModel):
-    balance: conint(ge=0) | None
+    balance: conint(ge=0)
     status: PrivilegeStatus
+
+
+class BalanceHistory(BaseModel):
+    date: dt
+    ticketUid: UUID
+    balanceDiff: int
+    operationType: PrivilegeHistoryStatus
+
+
+class PrivilegeInfoResponse(BaseModel):
+    balance: conint(ge=0)
+    status: PrivilegeStatus
+    history: list[BalanceHistory]
 
 
 class PrivilegeCreate(BaseModel):
