@@ -49,3 +49,7 @@ class TicketCreate(BaseModel):
     flight_number: constr(max_length=20)
     price: conint(ge=0)
     status: TicketStatus
+
+
+class TicketUpdate(BaseModel):
+    status: TicketStatus

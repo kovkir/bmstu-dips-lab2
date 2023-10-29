@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import Annotated
+from uuid import UUID
 
 from schemas.privilege_history import (
     PrivilegeHistoryFilter, 
@@ -40,14 +41,16 @@ router = APIRouter(
 async def get_all_privilege_histories(
         db: Annotated[Session, Depends(get_db)],
         privilegeHistoryCRUD: Annotated[IPrivilegeHistoryCRUD, Depends(get_privilege_history_crud)],
-        privilege_id: Annotated[int | None, Query(ge=1)] = None
+        privilege_id: Annotated[int | None, Query(ge=1)] = None,
+        ticket_uid: UUID | None = None
     ):
     return await PrivilegeHistoryService(
             privilegeHistoryCRUD=privilegeHistoryCRUD,
             db=db
         ).get_all(
             privilege_history_filter=PrivilegeHistoryFilter(
-                privilege_id=privilege_id
+                privilege_id=privilege_id,
+                ticket_uid=ticket_uid
             )
         )
 

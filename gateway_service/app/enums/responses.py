@@ -22,6 +22,14 @@ class RespEnum(Enum):
         "model": TicketPurchaseResponse,
         "description": "Информация о купленном билете",
     }
+    TicketRefund = {
+        "description": "Возврат билета успешно выполнен",
+        "content": {
+            "application/octet-stream": {
+                "example": ""
+            }
+        },
+    }
 
     FlightNumberNotFound = {
         "model": ErrorResponse,

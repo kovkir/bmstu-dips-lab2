@@ -14,6 +14,7 @@ class PrivilegeHistoryBase(BaseModel):
 
 class PrivilegeHistoryFilter(BaseModel):
     privilege_id: int | None = None
+    ticket_uid: UUID | None = None
 
 
 class PrivilegeHistoryCreate(PrivilegeHistoryBase):

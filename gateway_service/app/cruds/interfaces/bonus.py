@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from schemas.bonus import (
     PrivilegeHistoryCreate, 
+    PrivilegeHistoryFilter,
     PrivilegeCreate,
     PrivilegeUpdate
 )
@@ -31,6 +32,13 @@ class IBonusCRUD(ABC):
             privilege_id: int,
             privilege_update: PrivilegeUpdate
         ) -> dict:
+        pass
+    
+    @abstractmethod
+    async def get_all_privilege_histories(
+            self, 
+            ph_filter: PrivilegeHistoryFilter
+        ) -> list[dict]:
         pass
     
     @abstractmethod

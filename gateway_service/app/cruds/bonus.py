@@ -1,15 +1,15 @@
 import json
 import requests
 from requests import Response
-from fastapi import status
 
 from utils.settings import get_settings
 from cruds.interfaces.bonus import IBonusCRUD
 from cruds.base import BaseCRUD
 from schemas.bonus import (
     PrivilegeHistoryCreate, 
+    PrivilegeHistoryFilter,
     PrivilegeCreate, 
-    PrivilegeUpdate
+    PrivilegeUpdate,
 )
 
 
@@ -39,10 +39,7 @@ class BonusCRUD(IBonusCRUD, BaseCRUD):
         response: Response = requests.get(
             url=f'{self.http_path}privileges/{privilege_id}/'
         )
-        if response.status_code == status.HTTP_404_NOT_FOUND:
-            return None
-        else:
-            self._check_status_code(response.status_code)
+        self._check_status_code(response.status_code)
 
         return response.json()
     
@@ -65,19 +62,32 @@ class BonusCRUD(IBonusCRUD, BaseCRUD):
         ):
         response: Response = requests.patch(
             url=f'{self.http_path}privileges/{privilege_id}/',
-            data=json.dumps(privilege_update.model_dump(exclude_unset=True))
+            data=json.dumps(privilege_update.model_dump(mode='json', exclude_unset=True))
         )
         self._check_status_code(response.status_code)
 
         return response.json()
     
-    async def create_new_privilege_history(
+    async def get_all_privilege_histories(
             self, 
+            ph_filter: PrivilegeHistoryFilter
+        ):
+        response: Response = requests.get(
+            url=f'{self.http_path}privilege_histories/'\
+                f'{f"?privilege_id={ph_filter.privilege_id}&" if ph_filter.privilege_id else "?"}'\
+                f'{f"ticket_uid={ph_filter.ticket_uid}" if ph_filter.ticket_uid else ""}'
+        )
+        self._check_status_code(response.status_code)
+        
+        return response.json()
+    
+    async def create_new_privilege_history(
+            self,
             privilege_history_create: PrivilegeHistoryCreate
         ):
         response: Response = requests.post(
             url=f'{self.http_path}privilege_histories/',
-            data=json.dumps(privilege_history_create.model_dump(exclude_unset=True))
+            data=json.dumps(privilege_history_create.model_dump(mode='json', exclude_unset=True))
         )
         self._check_status_code(response.status_code)
         

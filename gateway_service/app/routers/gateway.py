@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, status, Query, Header
+from fastapi.responses import Response
 from typing import Annotated
+from uuid import UUID
 
 from schemas.flight import FlightList
 from schemas.ticket import Ticket, TicketPurchaseResponse, TicketPurchaseRequest
@@ -93,7 +95,7 @@ async def get_information_on_user_ticket(
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
         bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
         X_User_Name: Annotated[str, Header(max_length=80)],
-        ticketUid: str
+        ticketUid: UUID
     ):
     return await GatewayService(
             flightCRUD=flightCRUD,
@@ -128,4 +130,34 @@ async def buy_ticket(
         ).buy_ticket(
             user_name=X_User_Name,
             ticket_purchase_request=ticket_purchase_request
+        )
+
+
+@router.delete(
+    "/tickets/{ticketUid}", 
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+    responses={
+        status.HTTP_204_NO_CONTENT: RespEnum.TicketRefund.value,
+        status.HTTP_404_NOT_FOUND: RespEnum.TicketNotFound.value,
+    }
+)
+async def ticket_refund(
+        flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
+        ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
+        bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
+        X_User_Name: Annotated[str, Header(max_length=80)],
+        ticketUid: UUID
+    ):
+    ticket_dict = await GatewayService(
+            flightCRUD=flightCRUD,
+            ticketCRUD=ticketCRUD,
+            bonusCRUD=bonusCRUD
+        ).ticket_refund(
+            user_name=X_User_Name,
+            ticket_uid=ticketUid
+        )
+    
+    return Response(
+            status_code=status.HTTP_204_NO_CONTENT
         )

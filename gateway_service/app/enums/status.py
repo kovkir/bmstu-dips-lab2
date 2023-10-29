@@ -5,6 +5,7 @@ class TicketStatus(str, Enum):
     Paid = 'PAID'
     Canceled = 'CANCELED'
 
+
 class PrivilegeStatus(str, Enum):
     BRONZE = 'BRONZE'
     SILVER = 'SILVER'

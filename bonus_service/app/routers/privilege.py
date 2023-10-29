@@ -132,6 +132,7 @@ async def remove_privilege_by_id(
 @router.patch(
     "/{privilege_id}/",
     status_code=status.HTTP_200_OK,
+    response_model=Privilege,
     responses={
         status.HTTP_200_OK: RespPrivilegeEnum.Patch.value,
         status.HTTP_404_NOT_FOUND: RespPrivilegeEnum.NotFound.value,

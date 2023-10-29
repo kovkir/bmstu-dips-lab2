@@ -2,9 +2,10 @@ import json
 import requests
 from requests import Response
 from fastapi import status
+from uuid import UUID
 
 from utils.settings import get_settings
-from schemas.ticket import TicketCreate
+from schemas.ticket import TicketCreate, TicketUpdate
 from cruds.interfaces.ticket import ITicketCRUD
 from cruds.base import BaseCRUD
 
@@ -31,7 +32,7 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
         
         return response.json()
     
-    async def get_ticket_by_uid(self, ticket_uid: str):
+    async def get_ticket_by_uid(self, ticket_uid: UUID):
         response: Response = requests.get(
             url=f'{self.http_path}tickets/{ticket_uid}/'
         )
@@ -45,7 +46,7 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
     async def create_new_ticket(self, ticket_create: TicketCreate):
         response: Response = requests.post(
             url=f'{self.http_path}tickets/',
-            data=json.dumps(ticket_create.model_dump(exclude_unset=True))
+            data=json.dumps(ticket_create.model_dump(mode='json', exclude_unset=True))
         )
         self._check_status_code(response.status_code)
         
@@ -53,3 +54,12 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
         uid = location.split("/")[-1]
 
         return uid
+    
+    async def update_ticket(self, ticket_uid: UUID, ticket_update: TicketUpdate):
+        response: Response = requests.patch(
+            url=f'{self.http_path}tickets/{ticket_uid}/',
+            data=json.dumps(ticket_update.model_dump(mode='json', exclude_unset=True))
+        )
+        self._check_status_code(response.status_code)
+        
+        return response.json()

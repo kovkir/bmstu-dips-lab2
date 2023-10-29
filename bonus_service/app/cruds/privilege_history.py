@@ -46,6 +46,11 @@ class PrivilegeHistoryCRUD(IPrivilegeHistoryCRUD):
                 PrivilegeHistoryModel.privilege_id == \
                     privilege_history_filter.privilege_id
             )
+        if privilege_history_filter.ticket_uid:
+            privilege_histories = privilege_histories.filter(
+                PrivilegeHistoryModel.ticket_uid == \
+                    privilege_history_filter.ticket_uid
+            )
 
         return privilege_histories
     

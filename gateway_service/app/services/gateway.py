@@ -13,11 +13,13 @@ from schemas.bonus import (
     PrivilegeShortInfo, 
     PrivilegeCreate,
     PrivilegeUpdate,
-    PrivilegeHistoryCreate
+    PrivilegeHistoryCreate,
+    PrivilegeHistoryFilter
 )
 from schemas.ticket import (
     Ticket,
     TicketCreate, 
+    TicketUpdate,
     TicketPurchaseRequest, 
     TicketPurchaseResponse
 )
@@ -87,12 +89,12 @@ class GatewayService():
 
         return tickets
     
-    async def get_info_on_user_ticket(self, user_name: str, ticket_uid: str):
+    async def get_info_on_user_ticket(self, user_name: str, ticket_uid: UUID):
         ticket_dict = await self._ticketCRUD.get_ticket_by_uid(ticket_uid)
         if not ticket_dict or ticket_dict["username"] != user_name:
             raise NotFoundException(
                 prefix="Get Ticket",
-                message="Билета с таким UUID не существует"
+                message="Билета с таким UID у данного пользователя не существует"
             )
         
         flight_dict  = await self.__get_flight_by_number(ticket_dict["flight_number"])
@@ -141,13 +143,15 @@ class GatewayService():
             updated_privilege = await self.__write_off_bonuses(
                 privilege_dict=privilege_dict,
                 ticket_uid=ticket_dict["ticket_uid"],
-                paid_by_bonuses=paid_by_bonuses
+                balance_diff=paid_by_bonuses
             )
         else:
+            coeff = self.__get_bonus_accrual_coeff(privilege_dict["status"])
+
             updated_privilege = await self.__add_bonuses(
                 privilege_dict=privilege_dict,
                 ticket_uid=ticket_dict["ticket_uid"],
-                paid_by_money=paid_by_money
+                balance_diff=round(paid_by_money * coeff)
             )
 
         from_airport = await self.__get_airport_by_id(flight_dict["from_airport_id"])
@@ -165,16 +169,54 @@ class GatewayService():
                 privilege=PrivilegeShortInfo(**updated_privilege)
             )
     
+    async def ticket_refund(self, user_name: str, ticket_uid: UUID):
+        ticket_dict = await self._ticketCRUD.get_ticket_by_uid(ticket_uid)
+        if not ticket_dict or ticket_dict["username"] != user_name:
+            raise NotFoundException(
+                prefix="Get Ticket",
+                message="Билета с таким UID у данного пользователя не существует"
+            )
+        
+        updated_ticket_dict = await self._ticketCRUD.update_ticket(
+            ticket_uid=ticket_uid,
+            ticket_update=TicketUpdate(
+                status=TicketStatus.Canceled.value
+            )
+        )
+
+        privilege_histories = await self._bonusCRUD.get_all_privilege_histories(
+            PrivilegeHistoryFilter(
+                ticket_uid=ticket_uid
+            )
+        )
+        last_history_dict = privilege_histories[-1]
+        privilege_dict = await self._bonusCRUD.get_privilege_by_id(
+            privilege_id=last_history_dict["privilege_id"]
+        )
+
+        if last_history_dict["operation_type"] == PrivilegeHistoryStatus.FILL_IN_BALANCE:
+            await self.__write_off_bonuses(
+                privilege_dict=privilege_dict,
+                ticket_uid=ticket_uid,
+                balance_diff=last_history_dict["balance_diff"]
+            )
+        else:
+            await self.__add_bonuses(
+                privilege_dict=privilege_dict,
+                ticket_uid=ticket_uid,
+                balance_diff=last_history_dict["balance_diff"]
+            )
+
+        return updated_ticket_dict
+    
     async def __write_off_bonuses(
             self,
             privilege_dict: dict,
             ticket_uid: UUID,
-            paid_by_bonuses: int
+            balance_diff: int
         ):
-        if paid_by_bonuses > privilege_dict["balance"]:
+        if balance_diff > privilege_dict["balance"]:
             balance_diff = privilege_dict["balance"]
-        else:
-            balance_diff = paid_by_bonuses
 
         updated_privilege = await self._bonusCRUD.update_privilege_by_id(
             privilege_id=privilege_dict["id"],
@@ -197,17 +239,8 @@ class GatewayService():
     async def __add_bonuses(self,
             privilege_dict: dict,
             ticket_uid: UUID,
-            paid_by_money: int
+            balance_diff: int
         ):
-        if privilege_dict["status"] == PrivilegeStatus.GOLD.value:
-            coeff = 0.1
-        elif privilege_dict["status"] == PrivilegeStatus.SILVER.value:
-            coeff = 0.1
-        else:
-            coeff = 0.1
-
-        balance_diff = round(paid_by_money * coeff)
-
         updated_privilege = await self._bonusCRUD.update_privilege_by_id(
             privilege_id=privilege_dict["id"],
             privilege_update=PrivilegeUpdate(
@@ -225,6 +258,16 @@ class GatewayService():
         )
 
         return updated_privilege
+    
+    def __get_bonus_accrual_coeff(self, privilege_status: str) -> float:
+        if privilege_status == PrivilegeStatus.GOLD.value:
+            coeff = 0.1
+        elif privilege_status == PrivilegeStatus.SILVER.value:
+            coeff = 0.1
+        else:
+            coeff = 0.1
+
+        return coeff
 
     async def __paid_ticket(
             self, 

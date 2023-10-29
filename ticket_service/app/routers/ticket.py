@@ -136,6 +136,7 @@ async def remove_ticket_by_uid(
 @router.patch(
     "/{ticket_uid}/",
     status_code=status.HTTP_200_OK,
+    response_model=Ticket,
     responses={
         status.HTTP_200_OK: RespEnum.Patch.value,
         status.HTTP_404_NOT_FOUND: RespEnum.NotFound.value,
