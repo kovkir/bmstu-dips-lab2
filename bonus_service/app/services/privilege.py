@@ -13,12 +13,12 @@ class PrivilegeService():
     async def get_all(
             self,
             privilege_filter: PrivilegeFilter,
-            page: int = 0,
+            page: int = 1,
             size: int = 100
         ):
         return await self._privilegeCRUD.get_all(
                 privilege_filter=privilege_filter,
-                offset=page * size, 
+                offset=(page - 1) * size, 
                 limit=size
             )
 

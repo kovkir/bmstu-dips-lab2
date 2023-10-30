@@ -36,7 +36,7 @@ router = APIRouter(
 async def get_all_airports(
         db: Annotated[Session, Depends(get_db)], 
         airportCRUD: Annotated[IAirportCRUD, Depends(get_airport_crud)],
-        page: Annotated[int, Query(ge=0)] = 0,
+        page: Annotated[int, Query(ge=1)] = 1,
         size: Annotated[int, Query(ge=1)] = 100
     ):
     return await AirportService(

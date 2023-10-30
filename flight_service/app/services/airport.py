@@ -12,11 +12,11 @@ class AirportService():
         
     async def get_all(
             self,
-            page: int = 0,
+            page: int = 1,
             size: int = 100
         ):
         return await self._airportCRUD.get_all(
-                offset=page * size, 
+                offset=(page - 1) * size, 
                 limit=size
             )
 

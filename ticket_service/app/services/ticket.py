@@ -16,13 +16,13 @@ class TicketService():
             self, 
             ticket_filter: TicketFilter,
             sort_field: SortTicket,
-            page: int = 0, 
+            page: int = 1, 
             size: int = 100
         ):
         return await self._ticketCRUD.get_all(
                 ticket_filter=ticket_filter,
                 sort_field=sort_field,
-                offset=page * size, 
+                offset=(page - 1) * size, 
                 limit=size
             )
 

@@ -13,12 +13,12 @@ class FlightService():
     async def get_all(
             self,
             flight_filter: FlightFilter,
-            page: int = 0,
+            page: int = 1,
             size: int = 100
         ):
         return await self._flightCRUD.get_all(
                 flight_filter=flight_filter,
-                offset=page * size, 
+                offset=(page - 1) * size, 
                 limit=size
             )
 

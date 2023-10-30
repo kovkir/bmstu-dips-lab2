@@ -45,7 +45,7 @@ async def get_all_tickets(
         max_price: Annotated[int | None, Query(ge=1)] = None,
         status: TicketStatus | None = None,
         sort_field: SortTicket = SortTicket.IdAsc,
-        page: Annotated[int, Query(ge=0)] = 0,
+        page: Annotated[int, Query(ge=1)] = 1,
         size: Annotated[int, Query(ge=1)] = 100
     ):
     return await TicketService(

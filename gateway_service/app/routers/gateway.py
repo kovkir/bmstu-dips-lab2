@@ -47,7 +47,7 @@ async def get_list_of_flights(
         flightCRUD: Annotated[IFlightCRUD, Depends(get_flight_crud)],
         ticketCRUD: Annotated[ITicketCRUD, Depends(get_ticket_crud)],
         bonusCRUD:  Annotated[IBonusCRUD,  Depends(get_bonus_crud)],
-        page: Annotated[int, Query(ge=0)] = 0,
+        page: Annotated[int, Query(ge=0)] = 1,
         size: Annotated[int, Query(ge=1)] = 100
     ):
     return await GatewayService(

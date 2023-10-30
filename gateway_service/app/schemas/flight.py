@@ -20,7 +20,7 @@ class FlightResponse(BaseModel):
 
 
 class PaginationResponse(BaseModel):
-    page: conint(ge=0)
+    page: conint(ge=1)
     pageSize: conint(ge=1)
     totalElements: conint(ge=0)
     items: list[FlightResponse]

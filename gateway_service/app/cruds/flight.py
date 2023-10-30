@@ -16,7 +16,7 @@ class FlightCRUD(IFlightCRUD, BaseCRUD):
 
     async def get_all_flights(
             self,  
-            page: int = 0, 
+            page: int = 1, 
             size: int = 100,
             flight_number: str | None = None
         ):

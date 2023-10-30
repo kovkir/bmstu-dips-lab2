@@ -44,7 +44,7 @@ async def get_all_privileges(
         privilegeCRUD: Annotated[IPrivilegeCRUD, Depends(get_privilege_crud)],
         username: Annotated[str | None, Query(max_length=80)] = None,
         status: PrivilegeStatus | None = None,
-        page: Annotated[int, Query(ge=0)] = 0,
+        page: Annotated[int, Query(ge=1)] = 1,
         size: Annotated[int, Query(ge=1)] = 100
     ):
     return await PrivilegeService(
