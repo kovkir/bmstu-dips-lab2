@@ -1,0 +1,82 @@
+name: GitHub Classroom Workflow
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install the necessary packages
+        run: pip3.10 install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest -vs ticket_service/app/unit_tests/ticket.py
+
+  deploy:
+    name: Deploy service on VM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Copy code to VM
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "bonus_service,flight_service,ticket_service,gateway_service,docker,docker-compose.yml,config.yaml,requirements.txt"
+          target: /home/${{ secrets.SSH_USERNAME }}/flight-booking-system
+
+      - name: Run app on VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/${{ secrets.SSH_USERNAME }}/flight-booking-system
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose down
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker rmi gateway_service
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker rmi bonus_service
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker rmi flight_service
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker rmi ticket_service
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker rmi gateway_service
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
+
+  api-test:
+    name: Run API Tests
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+    
+      - name: Run API Tests
+        uses: matt-ball/newman-action@master
+        with:
+          collection: v1/postman/collection.json
+          environment: v1/postman/environment.json
+          delayRequest: 100
+          reporters: '[ "cli" ]'
