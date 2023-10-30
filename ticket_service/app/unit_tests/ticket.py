@@ -74,6 +74,7 @@ async def test_add_ticket_success():
             ticket.flight_number == "QwErTy" and \
             ticket.price == 1000 and \
             ticket.status == TicketStatus.Paid.value and \
+            ticket.id == correct_tickets[-1]["id"] + 1 and \
             type(ticket.ticket_uid) == UUID
     except:
         assert False
