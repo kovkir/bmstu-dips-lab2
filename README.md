@@ -175,7 +175,7 @@ GET http://localhost:8080/api/v1/privilege
 X-User-Name: {{username}}
 ```
 
-Описание в формате [OpenAPI](%5Binst%5D%5Bv1%5D%20Flight%20Booking%20System.yml).
+Описание в формате [OpenAPI](docs/example_openapi.yaml).
 
 ### Данные для тестов
 
