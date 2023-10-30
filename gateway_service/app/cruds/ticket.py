@@ -20,7 +20,7 @@ class TicketCRUD(ITicketCRUD, BaseCRUD):
 
     async def get_all_tickets(
             self,
-            page: int = 0,
+            page: int = 1,
             size: int = 100,
             username: str | None = None
         ):

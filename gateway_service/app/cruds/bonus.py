@@ -23,7 +23,7 @@ class BonusCRUD(IBonusCRUD, BaseCRUD):
 
     async def get_all_privileges(
             self,  
-            page: int = 0, 
+            page: int = 1, 
             size: int = 100,
             username: str | None = None
         ):
